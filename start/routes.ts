@@ -14,14 +14,17 @@
 | and then import them inside `start/routes.ts` as follows
 |
 | import './routes/cart'
-| import './routes/customer'
+| import './routes/customer''
 |
 */
 
 import Route from '@ioc:Adonis/Core/Route'
 
 Route.get('/', async () => {
-  return { Njila_Yetu: 'Teste de integração paypal com adonis js v5' }
+  return { Njila_Yetu: 'Teste de integração checkout paypal com adonis js v5' }
 })
-
-Route.post('/checkout', 'PaypalsController.checkout').as('checkout')
+Route.get('/index', async ({ view }) => {
+  return view.render('welcome')
+})
+Route.post('/api/orders', 'PaypalsController.create_order')
+Route.post('/api/orders/:orderID/capture', 'PaypalsController.captureOrder')

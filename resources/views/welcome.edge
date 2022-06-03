@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AdonisJs with PayPal</title>
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,500&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      background-color: #F7F8FA;
+      font-family: 'Poppins', sans-serif;
+      height: 100vh;
+      color: #46444c;
+      position: relative;
+    }
+
+    body:before {
+      content: '';
+      background: #5A45FF;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      position: absolute;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    a {
+      color: #5A45FF;
+      text-decoration: none;
+    }
+
+    main {
+      max-width: 620px;
+      margin: auto;
+      height: 100vh;
+      padding: 0 30px;
+      align-items: center;
+      display: flex;
+      justify-content: center;
+    }
+
+    .title {
+      font-size: 50px;
+      line-height: 50px;
+      margin-bottom: 10px;
+      color: #17161A;
+    }
+
+    .subtitle {
+      font-size: 26px;
+      margin-bottom: 40px;
+    }
+
+    p {
+      margin-bottom: 20px;
+    }
+
+    main ul {
+      list-style: none;
+    }
+
+    main li {
+      margin-bottom: 5px;
+      position: relative;
+      padding-left: 25px;
+    }
+
+    main li:before {
+      content: '—';
+      position: absolute;
+      left: 0;
+    }
+
+    main code {
+      font-size: 16px;
+      background: #e6e2ff;
+    }
+  </style>
+</head>
+<body>
+ <h1>NjilaYetu - Integração com PayPal checkout API</h1>
+ 
+ <script src="https://www.paypal.com/sdk/js?client-id=AYoNCqIsP0POauQ_GLsK7HHajjl3-kqlNJjb9EJxSe4A3Ab6zgSD4zpF-6wAQ7NEeXLnPL9M_aEnb9vD&currency=USD"></script>
+    <div id="paypal-button-container"></div>
+    <script>
+      paypal
+        .Buttons({
+          createOrder: function (data, actions) {
+            return fetch("/api/orders", {
+              method: "post",
+              // use o parâmetro "body" para opcionalmente passar informações adicionais do pedido
+              // como IDs de produtos ou quantidade
+            })
+              .then((response) => response.json())
+              .then((order) => order.id);
+          },
+          // Finalize a transação após a aprovação do pagador
+          onApprove: function (data, actions) {
+            return fetch(`/api/orders/${data.orderID}/capture`, {
+              method: "post",
+            })
+              .then((response) => response.json())
+              .then((orderData) => {
+                var element = document.getElementById('paypal-button-container');
+                element.innerHTML = '<h3>Obrigado por seu pagamento!</h3>';
+              });
+          },
+        })
+        .render("#paypal-button-container");
+    </script>
+</body>
+</html>
